@@ -71,7 +71,7 @@ function onSearchForm(e) {
         );
       } else {
         renderGallery(data.hits);
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+        simpleLightBox.refresh();
         Notiflix.Notify.success(`Ура! Ми знайшли ${data.totalHits} зображень.`);
       }
     })

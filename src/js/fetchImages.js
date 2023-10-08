@@ -1,19 +1,8 @@
 import axios from 'axios';
-import { KEY } from './api-key.js';
+import { PIXABAY_API_KEY  } from './api-key.js';
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
-axios.interceptors.response.use(
-  response => {
-    return response;
-  },
-  error => {
-    console.error('Виникла помилка:', error);
-    Notiflix.Notify.failure('Виникла помилка. Будь ласка, спробуйте пізніше.');
-    return Promise.reject(error);
-  },
-);
 
-const BASE_URL = 'https://pixabay.com/api/';
 
 /**
  * Запитує зображення з сервера Pixabay.
@@ -25,7 +14,7 @@ const BASE_URL = 'https://pixabay.com/api/';
  */
 async function fetchImages(query, page, perPage) {
   const params = {
-    key: KEY,
+    key: PIXABAY_API_KEY ,
     q: query,
     image_type: 'photo',
     orientation: 'horizontal',
