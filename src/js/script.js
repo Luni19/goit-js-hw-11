@@ -8,7 +8,7 @@ const gallery = document.querySelector('.gallery');
 
 let query = '';
 let page = 1;
-let simpleLightBox;
+const simpleLightBox = new SimpleLightbox('.gallery a');
 const perPage = 40;
 
 searchForm.addEventListener('submit', onSearchForm);
@@ -36,10 +36,10 @@ function renderGallery(images) {
           <div class="gallery-item" id="${id}">
             <img class="gallery-item__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
             <div class="info">
-              <p class="info-item"><b>Likes</b>${likes}</p>
-              <p class="info-item"><b>Views</b>${views}</p>
-              <p class="info-item"><b>Comments</b>${comments}</p>
-              <p class="info-item"><b>Downloads</b>${downloads}</p>
+              <p class="info-item"><b>Лайки:</b> ${likes}</p>
+              <p class="info-item"><b>Перегляди:</b> ${views}</p>
+              <p class="info-item"><b>Коментарі:</b> ${comments}</p>
+              <p class="info-item"><b>Завантаження:</b> ${downloads}</p>
             </div>
           </div>
         </a>
@@ -47,17 +47,7 @@ function renderGallery(images) {
     })
     .join('');
 
-  gallery.insertAdjacentHTML('beforeend', markup);
-
-  // Цей код дозволяє автоматично прокручувати сторінку на висоту 2 карток галереї, коли вона завантажується
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .firstElementChild.getBoundingClientRect();
-
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
+  gallery.insertAdjacentHTML('beforeend', markup); 
 }
 
 function onSearchForm(e) {
@@ -68,7 +58,7 @@ function onSearchForm(e) {
 
   if (query === '') {
     Notiflix.Notify.failure(
-      'The search string cannot be empty. Please specify your search query.',
+      'Рядок пошуку не може бути порожнім. Будь ласка, вкажіть свій пошуковий запит.',
     );
     return;
   }
@@ -77,12 +67,12 @@ function onSearchForm(e) {
     .then(data => {
       if (data.totalHits === 0) {
         Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.',
+          'На жаль, зображень, що відповідають вашому запиту, не знайдено. Будь ласка, спробуйте ще раз.',
         );
       } else {
         renderGallery(data.hits);
         simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-        Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        Notiflix.Notify.success(`Ура! Ми знайшли ${data.totalHits} зображень.`);
       }
     })
     .catch(error => console.log(error))
@@ -93,19 +83,17 @@ function onSearchForm(e) {
 
 function onloadMore() {
   page += 1;
-  simpleLightBox.destroy();
-  // simpleLightBox.refresh();
 
   fetchImages(query, page, perPage)
     .then(data => {
       renderGallery(data.hits);
-      simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+      simpleLightBox.refresh();
 
       const totalPages = Math.ceil(data.totalHits / perPage);
 
       if (page > totalPages) {
         Notiflix.Notify.failure(
-          "We're sorry, but you've reached the end of search results.",
+          'На жаль, ви дійшли до кінця результатів пошуку.',
         );
       }
     })
@@ -119,7 +107,7 @@ function checkIfEndOfPage() {
   );
 }
 
-// Функція, яка виконуеться, якщо користувач дійшов до кінця сторінки
+// Функція, яка виконується, якщо користувач дійшов до кінця сторінки
 function showLoadMorePage() {
   if (checkIfEndOfPage()) {
     onloadMore();
@@ -129,7 +117,7 @@ function showLoadMorePage() {
 // Додати подію на прокручування сторінки, яка викликає функцію showLoadMorePage
 window.addEventListener('scroll', showLoadMorePage);
 
-// кнопка “вгору”->
+// кнопка "вгору"
 arrowTop.onclick = function () {
   window.scrollTo({ top: 0, behavior: 'smooth' });
   // після scrollTo відбудеться подія "scroll", тому стрілка автоматично сховається
